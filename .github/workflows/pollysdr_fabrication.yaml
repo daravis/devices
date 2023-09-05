@@ -59,7 +59,9 @@ jobs:
         else
           branch="${GITHUB_REF##*/}"
         fi
-        earthly --use-inline-cache --save-inline-cache --push +pollysdr-panel-gerbers --BRANCH=$branch || earthly --use-inline-cache --save-inline-cache --push +pollysdr-gerbers --BRANCH=$branch || echo "Failed"
+        earthly --use-inline-cache --save-inline-cache --push +pollysdr-panel-drawing --BRANCH=$branch || echo "Failed"
+        earthly --use-inline-cache --save-inline-cache --push +pollysdr-drawing --BRANCH=$branch || echo "Failed"
+        echo "Done"
     - uses: actions/upload-artifact@v3
       with:
         name: drawings
