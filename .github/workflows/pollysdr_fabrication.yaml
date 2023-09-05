@@ -29,40 +29,29 @@ jobs:
           branch="${GITHUB_REF##*/}"
         fi
         git checkout -b "$branch" || true
-    - name: Build KiKit
+    - name: Build gerbers for board
       run: |
-        branch=""
-        if [ -n "$GITHUB_HEAD_REF" ]; then
-          branch="$GITHUB_HEAD_REF"
-        else
-          branch="${GITHUB_REF##*/}"
-        fi
-        earthly --use-inline-cache --save-inline-cache --push +kikit --BRANCH=$branch
-    - name: Build gerbers
-      run: |
-        branch=""
-        if [ -n "$GITHUB_HEAD_REF" ]; then
-          branch="$GITHUB_HEAD_REF"
-        else
-          branch="${GITHUB_REF##*/}"
-        fi
-        earthly --use-inline-cache --save-inline-cache --push +pollysdr-panel-gerbers --BRANCH=$branch && earthly --use-inline-cache --save-inline-cache --push +pollysdr-gerbers --BRANCH=$branch
+        rm -r build || echo "No build dir"
+        earthly +pollysdr-gerbers
     - uses: actions/upload-artifact@v3
       with:
-        name: gerbers
-        path: build/*
+        name: pollysdr-gerbers
+        path: build/*.zip
+    - name: Build gerbers for panel
+      run: |
+        rm -r build || echo "No build dir"
+        earthly +pollysdr-panel-gerbers
+    - uses: actions/upload-artifact@v3
+      with:
+        name: pollysdr-panel-gerbers
+        path: build/*.zip
     - name: Generate drawings
       run: |
-        branch=""
-        if [ -n "$GITHUB_HEAD_REF" ]; then
-          branch="$GITHUB_HEAD_REF"
-        else
-          branch="${GITHUB_REF##*/}"
-        fi
-        earthly --use-inline-cache --save-inline-cache --push +pollysdr-panel-drawing --BRANCH=$branch || echo "Failed"
-        earthly --use-inline-cache --save-inline-cache --push +pollysdr-drawing --BRANCH=$branch || echo "Failed"
+        rm -r build || echo "No build dir"
+        earthly +pollysdr-panel-drawing || echo "Failed"
+        earthly +pollysdr-drawing || echo "Failed"
         echo "Done"
     - uses: actions/upload-artifact@v3
       with:
         name: drawings
-        path: build/*
+        path: build/*.png
