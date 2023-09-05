@@ -26,7 +26,7 @@ pollysdr-panelize:
   END
   
   RUN bash -c 'kikit panelize \
-    --layout "grid; rows: 4; cols: 2; space: 3mm; hbackbone: 1mm; hbonecut: true" \
+    --layout "grid; rows: 4; cols: 3; space: 3mm; hbackbone: 3mm; hbonecut: true" \
     --tabs "fixed; width: 3mm; vcount: 2; hcount: 0" \
     --cuts vcuts \
     --framing "tightframe; width: 5mm; space: 3mm; mintotalheight: 100mm; mintotalwidth: 100mm" \
