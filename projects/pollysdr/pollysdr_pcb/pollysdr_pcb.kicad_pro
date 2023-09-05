@@ -177,8 +177,12 @@
     "equivalence_files": []
   },
   "libraries": {
-    "pinned_footprint_libs": [],
-    "pinned_symbol_libs": []
+    "pinned_footprint_libs": [
+      "Custom"
+    ],
+    "pinned_symbol_libs": [
+      "Custom"
+    ]
   },
   "meta": {
     "filename": "pollysdr_pcb.kicad_pro",
