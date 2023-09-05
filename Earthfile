@@ -3,10 +3,8 @@ VERSION --arg-scope-and-set 0.7
 kikit:
   FROM fedora:latest
 
-  RUN yum -y install kicad python3-pip
-  RUN yum -y install git zip librsvg2
+  RUN yum -y install kicad python3-pip python3-mistune inkscape git zip librsvg2
   RUN python3 -m pip install --upgrade pip && pip install kikit && pip install git+https://github.com/yaqwsx/PcbDraw.git@4699cfd90aaa20d2fdff0f4c7ee6ac9d7a9d8758
-  RUN yum -y install python3-mistune inkscape
 
 pollysdr-base:
   FROM +kikit

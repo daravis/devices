@@ -14,6 +14,12 @@ jobs:
       with:
         version: v0.7.8
     - uses: actions/checkout@v2
+    - name: Login to GitHub Container Registry
+      uses: docker/login-action@v2
+      with:
+        registry: ghcr.io
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
     - name: Put back the git branch into git (Earthly uses it for tagging)
       run: |
         branch=""
@@ -24,13 +30,13 @@ jobs:
         fi
         git checkout -b "$branch" || true
     - name: Build gerbers
-      run: earthly +pollysdr-panel-gerbers && earthly +pollysdr-gerbers
+      run: earthly --use-inline-cache --save-inline-cache --push +pollysdr-panel-gerbers && earthly --use-inline-cache --save-inline-cache --push +pollysdr-gerbers
     - uses: actions/upload-artifact@v3
       with:
         name: gerbers
         path: build/*
     - name: Generate drawings
-      run: earthly +pollysdr-panel-gerbers || earthly +pollysdr-gerbers || echo "Failed"
+      run: earthly --use-inline-cache --save-inline-cache --push +pollysdr-panel-gerbers || earthly --use-inline-cache --save-inline-cache --push +pollysdr-gerbers || echo "Failed"
     - uses: actions/upload-artifact@v3
       with:
         name: drawings
