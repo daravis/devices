@@ -10,7 +10,7 @@ kikit:
   SAVE IMAGE --cache-from=ghcr.io/daravis/kikit:main --push ghcr.io/daravis/kikit:$BRANCH
 
 pollysdr-base:
-  FROM +kikit
+  FROM ghcr.io/daravis/kikit:main
 
   WORKDIR /workdir
   COPY . .
