@@ -83,3 +83,60 @@ pollysdr-drawing:
   ELSE
     SAVE ARTIFACT board.png AS LOCAL build/pollysdr-$(git rev-parse --short HEAD).png
   END
+
+s2mod-base:
+  FROM ghcr.io/daravis/kikit:main
+
+  WORKDIR /workdir
+  COPY . .
+  RUN kikit drc run projects/blizzard/s2mod/tower.kicad_pcb
+
+s2mod-panelize:
+  FROM +s2mod-base
+
+  IF $(git status --porcelain=v1 2>/dev/null)
+    LET REVISION="$(git rev-parse --abbrev-ref HEAD)-$(git rev-parse --short HEAD)~"
+  ELSE
+    LET REVISION="$(git rev-parse --abbrev-ref HEAD)-$(git rev-parse --short HEAD)"
+  END
+
+  RUN bash -c 'kikit panelize \
+    --layout "grid; rows: 5; cols: 5; space: 3mm; hbackbone: 3mm; hbonecut: true" \
+    --tabs "annotation" \
+    --cuts "mousebites; drill: 0.3mm; spacing: 0.55mm; offset: 0mm; prolong: 0.5mm" \
+    --framing "railstb; width: 5mm; space: 3mm; mintotalheight: 70mm; mintotalwidth: 70mm" \
+    --post "millradius: 1mm" \
+    --text "simple; text: S2MOD; anchor: mt; voffset: 1.5mm; hjustify: center; vjustify: center;" \
+    --text2 "simple; text: ${REVISION}; anchor: mb; voffset: -1.5mm; hjustify: center; vjustify: center;" \
+    projects/blizzard/s2mod/tower.kicad_pcb panel.kicad_pcb'
+  SAVE ARTIFACT panel.kicad_pcb
+
+
+s2mod-panel-gerbers:
+  FROM +s2mod-base
+
+  COPY +s2mod-panelize/panel.kicad_pcb build/s2mod_panel.kicad_pcb
+
+  RUN mkdir -p build/outputs && kikit fab jlcpcb --no-drc --assembly --schematic projects/blizzard/s2mod/tower.kicad_sch build/s2mod_panel.kicad_pcb build/outputs
+
+  IF --no-cache [[ $(git status --porcelain=v1 2>/dev/null) ]]
+    SAVE ARTIFACT build/outputs/gerbers.zip gerbers.zip AS LOCAL build/s2mod-panel-dirty-$(git rev-parse --short HEAD).zip
+    SAVE ARTIFACT build/outputs/bom.csv bom.csv AS LOCAL build/s2mod-panel-bom-dirty-$(git rev-parse --short HEAD).csv
+    SAVE ARTIFACT build/outputs/pos.csv pos.csv AS LOCAL build/s2mod-panel-pos-dirty-$(git rev-parse --short HEAD).csv
+  ELSE
+    SAVE ARTIFACT build/outputs/gerbers.zip gerbers.zip AS LOCAL build/s2mod-panel-$(git rev-parse --short HEAD).zip
+    SAVE ARTIFACT build/outputs/bom.csv bom.csv AS LOCAL build/s2mod-panel-bom-$(git rev-parse --short HEAD).csv
+    SAVE ARTIFACT build/outputs/pos.csv pos.csv AS LOCAL build/s2mod-panel-pos-$(git rev-parse --short HEAD).csv
+  END
+
+s2mod-gerbers:
+  FROM +s2mod-base
+
+  RUN mkdir -p build/outputs && kikit fab jlcpcb --no-drc projects/blizzard/s2mod_pcb/s2mod_pcb.kicad_pcb build/outputs
+
+  IF --no-cache [[ $(git status --porcelain=v1 2>/dev/null) ]]
+    SAVE ARTIFACT build/outputs/gerbers.zip gerbers.zip AS LOCAL build/s2mod-dirty-$(git rev-parse --short HEAD).zip
+  ELSE
+    SAVE ARTIFACT build/outputs/gerbers.zip gerbers.zip AS LOCAL build/s2mod-$(git rev-parse --short HEAD).zip
+  END
+

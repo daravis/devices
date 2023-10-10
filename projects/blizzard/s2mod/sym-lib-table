@@ -1,0 +1,6 @@
+(sym_lib_table
+  (version 7)
+  (lib (name "Nokia")(type "KiCad")(uri "${KIPRJMOD}/Nokia.kicad_sym")(options "")(descr ""))
+  (lib (name "tp4056")(type "KiCad")(uri "${KIPRJMOD}/tp4056.kicad_sym")(options "")(descr ""))
+  (lib (name "BALF-SPI2-01D3")(type "KiCad")(uri "${KIPRJMOD}/BALF-SPI2-01D3.kicad_sym")(options "")(descr ""))
+)
