@@ -101,10 +101,10 @@ s2mod-panelize:
   END
 
   RUN bash -c 'kikit panelize \
-    --layout "grid; rows: 5; cols: 5; space: 3mm; hbackbone: 3mm; hbonecut: true" \
-    --tabs "annotation" \
-    --cuts "mousebites; drill: 0.3mm; spacing: 0.55mm; offset: 0mm; prolong: 0.5mm" \
-    --framing "railstb; width: 5mm; space: 3mm; mintotalheight: 70mm; mintotalwidth: 70mm" \
+    --layout "grid; rows: 4; cols: 5" \
+    --tabs full \
+    --cuts vcuts \
+    --framing "railstb; width: 5mm; mintotalheight: 70mm; mintotalwidth: 70mm" \
     --post "millradius: 1mm" \
     --text "simple; text: S2MOD; anchor: mt; voffset: 1.5mm; hjustify: center; vjustify: center;" \
     --text2 "simple; text: ${REVISION}; anchor: mb; voffset: -1.5mm; hjustify: center; vjustify: center;" \
